@@ -143,13 +143,26 @@ function render(
       ...(schema.type === 'array' ? [schema.items] : []),
     ]
       .map(noRef)
-      .filter((s) => isComplexType(s) && !ctx.stack.includes(s));
+      .filter(
+        (s) =>
+          isComplexType(s) &&
+          !ctx.stack.includes(s) &&
+          (!isObject(s) ||
+            Object.keys(s.properties ?? {}).length > 0 ||
+            s.additionalProperties),
+      );
 
     ctx.stack.push(schema);
     child.push(
       ...mentionedObjectTypes.map((s, idx) =>
         renderer.ObjectCollapsible(
-          { name: s.title ?? `Object ${(idx + 1).toString()}` },
+          {
+            name:
+              s.title ??
+              `Properties${
+                mentionedObjectTypes.length > 1 ? ` (option ${idx + 1})` : ''
+              }`,
+          },
           [
             render('element', noRef(s), {
               ...ctx,

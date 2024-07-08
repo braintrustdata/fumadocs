@@ -89,13 +89,23 @@ export function schemaElement(
       false,
     )
   ) {
+    child.push('Any of:\n\n');
     child.push(
-      ...schema.anyOf.map((s, idx) =>
-        schemaElement(`${name} (option ${(idx + 1).toString()})`, noRef(s), {
-          ...ctx,
-          required: false,
-          parseObject: false,
-        }),
+      ...schema.anyOf.map(
+        (s, idx) =>
+          schemaElement(`${name} (option ${(idx + 1).toString()})`, noRef(s), {
+            ...ctx,
+            required: false,
+            parseObject: false,
+          }),
+
+        // `${renderer.ObjectCollapsible({ name }, [
+        //   schemaElement(name, noRef(s), {
+        //     ...ctx,
+        //     parseObject: true,
+        //     required: false,
+        //   }),
+        // ])}\n\n`,
       ),
     );
   }

@@ -143,21 +143,43 @@ function render(
       ...(schema.type === 'array' ? [schema.items] : []),
     ]
       .map(noRef)
-      .filter((s) => isComplexType(s) && !ctx.stack.includes(s));
+      .filter(
+        (s) =>
+          // isComplexType(s) &&
+          !ctx.stack.includes(s) &&
+          (!isObject(s) ||
+            Object.keys(s.properties ?? {}).length > 0 ||
+            s.additionalProperties),
+      );
 
     ctx.stack.push(schema);
     child.push(
       ...mentionedObjectTypes.map((s, idx) =>
-        renderer.ObjectCollapsible(
-          { name: s.title ?? `Object ${(idx + 1).toString()}` },
-          [
-            render('element', noRef(s), {
+        schema.allOf ?? !isComplexType(s)
+          ? render(schema.allOf ? 'element' : name, s, {
               ...ctx,
               parseObject: true,
               required: false,
-            }),
-          ],
-        ),
+            })
+          : renderer.ObjectCollapsible(
+              {
+                name:
+                  s.title ??
+                  s.description ??
+                  `Properties${
+                    schema.anyOf && mentionedObjectTypes.length > 1
+                      ? ` (option ${(idx + 1).toString()})`
+                      : ''
+                  }`,
+              },
+              [
+                render('element', noRef(s), {
+                  ...ctx,
+                  parseObject: true,
+                  required: false,
+                }),
+              ],
+            ),
       ),
     );
     ctx.stack.pop();

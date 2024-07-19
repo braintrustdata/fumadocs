@@ -145,7 +145,7 @@ function render(
       .map(noRef)
       .filter(
         (s) =>
-          isComplexType(s) &&
+          // isComplexType(s) &&
           !ctx.stack.includes(s) &&
           (!isObject(s) ||
             Object.keys(s.properties ?? {}).length > 0 ||
@@ -155,8 +155,8 @@ function render(
     ctx.stack.push(schema);
     child.push(
       ...mentionedObjectTypes.map((s, idx) =>
-        schema.allOf
-          ? render('element', s, {
+        schema.allOf ?? !isComplexType(s)
+          ? render(schema.allOf ? 'element' : name, s, {
               ...ctx,
               parseObject: true,
               required: false,
@@ -165,6 +165,7 @@ function render(
               {
                 name:
                   s.title ??
+                  s.description ??
                   `Properties${
                     schema.anyOf && mentionedObjectTypes.length > 1
                       ? ` (option ${(idx + 1).toString()})`

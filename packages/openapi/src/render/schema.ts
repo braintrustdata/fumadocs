@@ -155,22 +155,30 @@ function render(
     ctx.stack.push(schema);
     child.push(
       ...mentionedObjectTypes.map((s, idx) =>
-        renderer.ObjectCollapsible(
-          {
-            name:
-              s.title ??
-              `Properties${
-                mentionedObjectTypes.length > 1 ? ` (option ${idx + 1})` : ''
-              }`,
-          },
-          [
-            render('element', noRef(s), {
+        schema.anyOf
+          ? renderer.ObjectCollapsible(
+              {
+                name:
+                  s.title ??
+                  `Properties${
+                    mentionedObjectTypes.length > 1
+                      ? ` (option ${(idx + 1).toString()})`
+                      : ''
+                  }`,
+              },
+              [
+                render('element', noRef(s), {
+                  ...ctx,
+                  parseObject: true,
+                  required: false,
+                }),
+              ],
+            )
+          : render('element', s, {
               ...ctx,
               parseObject: true,
               required: false,
             }),
-          ],
-        ),
       ),
     );
     ctx.stack.pop();

@@ -155,13 +155,18 @@ function render(
     ctx.stack.push(schema);
     child.push(
       ...mentionedObjectTypes.map((s, idx) =>
-        schema.anyOf
-          ? renderer.ObjectCollapsible(
+        schema.allOf
+          ? render('element', s, {
+              ...ctx,
+              parseObject: true,
+              required: false,
+            })
+          : renderer.ObjectCollapsible(
               {
                 name:
                   s.title ??
                   `Properties${
-                    mentionedObjectTypes.length > 1
+                    schema.anyOf && mentionedObjectTypes.length > 1
                       ? ` (option ${(idx + 1).toString()})`
                       : ''
                   }`,
@@ -173,12 +178,7 @@ function render(
                   required: false,
                 }),
               ],
-            )
-          : render('element', s, {
-              ...ctx,
-              parseObject: true,
-              required: false,
-            }),
+            ),
       ),
     );
     ctx.stack.pop();

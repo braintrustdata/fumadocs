@@ -44,10 +44,10 @@ export function Toc({ items, header, footer }: TOCProps): ReactElement {
       className="sticky top-0 flex h-dvh w-[220px] shrink-0 flex-col gap-4 pr-3 pt-12 max-lg:hidden xl:w-[260px] rtl:pl-3"
     >
       {header}
-      <h3 className="-mb-1 -ms-0.5 inline-flex items-center gap-1.5 text-sm text-muted-foreground">
+      {/* <h3 className="-mb-1 -ms-0.5 inline-flex items-center gap-1.5 text-sm text-muted-foreground">
         <Text className="size-4" />
         {text.toc}
-      </h3>
+      </h3> */}
       <TOCItems items={items} />
       {footer}
     </div>
